@@ -3,7 +3,7 @@
     <div class="musicplay">
       <div class="play-top" v-show="showTop">
         <div class="image">
-          <img :src="userinfo.pic" alt="">
+          <img :src="userinfo.pic" alt="" @click="showLyricBox">
         </div>
         <div class="userinfo">
           <div class="info">
@@ -63,19 +63,24 @@
     </transition>
 
     <music-lyric ref="musicLyric"></music-lyric> -->
+    <music-lyric ref="musicLyric" />
   </div>
 </template>
 
 <script>
 // import { _getSongUrl, _getLyric } from '@/network/song'
-import { playlistTool } from './playTool'
+import { playlistTool ,_getLyric} from './playTool'
 import { _getSongUrl } from '@/network/song'
 import { formatDate, deepClone } from '@/static/js/tool'
+import MusicLyric from './MusicLyric'
 // import MusicPlayList from './MusicPlayList'
 // 歌词
 // import MusicLyric from './MusicLyric'
 export default {
     name:'player',
+    components: {
+      MusicLyric
+    },
   data () {
     return {
       playList: {
@@ -155,6 +160,7 @@ export default {
         
         const result = new playlistTool(res.data[0])
         this.playList.src=result.src
+        this.$store.commit('editSongDetai', this.musicList[this.currentIndex])
       })
     },
      init () {
@@ -176,6 +182,10 @@ export default {
         this.$refs.audio.volume = this.volume/100
       }
     },
+    // 显示歌词面板
+    showLyricBox () {
+      this.$store.commit('editshowLyric', true)
+    }
    },
   mounted () {
     this.$bus.$on('playMusic', (index, list) => {
@@ -198,10 +208,6 @@ export default {
   watch: {
     // 监听音量
     
-  },
-  components: {
-    // MusicPlayList,
-    // MusicLyric
   },
   computed: {
     // 变成计算属性
